@@ -37,11 +37,15 @@ app.use((err, req, res, next) => {
   res.status(err.statusCode || 500).json({ success: false, message: err.message || 'Server Error' });
 });
 
-const PORT = process.env.PORT || 5000;
+// Kick off the DB connection. On serverless this primes the cached connection
+// (mongoose buffers queries until it's ready); locally it connects on boot.
+connectDB().catch((err) => console.error('Initial DB connection failed:', err.message));
 
-const startServer = async () => {
-  await connectDB();
+// Only run a long-lived HTTP server when executed directly (local dev / a VPS).
+// On Vercel this file is imported as a serverless function, so we export the app.
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Micky's server running on port ${PORT}`));
-};
+}
 
-startServer();
+module.exports = app;
