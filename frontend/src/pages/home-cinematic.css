@@ -128,7 +128,7 @@
 .cn-story-inner .cn-eyebrow { color: var(--gold); }
 .cn-story-inner h2 { font-family: var(--font-headline); text-transform: uppercase; line-height: .96; font-size: clamp(34px, 6vw, 92px); margin: 14px 0 18px; text-shadow: 0 2px 24px rgba(0,0,0,.55); }
 .cn-story-inner h2 em { font-style: normal; color: var(--gold); }
-.cn-story-inner p { max-width: 56ch; margin: 0 auto; line-height: 1.8; color: rgba(255,255,255,.92); font-size: clamp(15px,1.2vw,18px); text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.cn-story-inner p { max-width: 56ch; margin: 0 auto; line-height: 1.8; color: var(--gold); font-size: clamp(15px,1.2vw,18px); text-shadow: 0 1px 12px rgba(0,0,0,.7); }
 
 /* ── SECTION SHELL (dark) ─────────────────────────────── */
 .cn-section { position: relative; padding: clamp(70px,10vw,150px) clamp(20px,5vw,70px); }
