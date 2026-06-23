@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import 'lenis/dist/lenis.css';
 import { PRODUCTS, BUNDLES } from './data/siteData';
 import { useScrollReveal } from './hooks/useScrollReveal';
@@ -41,9 +41,29 @@ export default function App() {
   function navigate(nextView) {
     setView(nextView);
     setMenuOpen(false);
+    // record the page in browser history so Back/Forward buttons work
+    window.history.pushState({ view: nextView }, '');
     if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
     else window.scrollTo({ top: 0, behavior: 'auto' });
   }
+
+  // Keep the view in sync with the browser Back/Forward buttons.
+  useEffect(() => {
+    // seed the first history entry with the current view
+    window.history.replaceState({ view }, '');
+
+    function handlePopState(e) {
+      const nextView = (e.state && e.state.view) || { name: 'home' };
+      setView(nextView);
+      setMenuOpen(false);
+      if (window.__lenis) window.__lenis.scrollTo(0, { immediate: true });
+      else window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function saveCart(nextCart) {
     setCart(nextCart);
