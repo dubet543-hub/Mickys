@@ -80,18 +80,27 @@ function InstagramFeed() {
     <section className="rh-instagram">
       <Reveal className="rh-section-head">
         <span className="rh-kicker">Follow along</span>
-        <h2>Kitchens on <em>Instagram</em></h2>
-        <p>See how professional kitchens across India use Micky's every single day.</p>
+        <h2>We're on <em>Instagram</em></h2>
+        <p>Behind-the-scenes from professional kitchens using Micky's every day.</p>
       </Reveal>
 
       {isConfigured ? (
         <div ref={containerRef} className="rh-instagram-widget" />
       ) : (
-        /* Placeholder shown until behold.so is configured */
-        <div className="rh-instagram-placeholder">
-          <Instagram size={40} className="rh-ig-icon" />
-          <p>@mickys.ki.zimmedari</p>
-          <span>Live feed loads here after Behold.so setup</span>
+        <div className="rh-ig-setup-banner">
+          <Instagram size={28} className="rh-ig-setup-icon" />
+          <div>
+            <strong>Connect Instagram to show live posts</strong>
+            <span>Go to <b>behold.so</b> → sign in with @mickys.ki.zimmedari → paste Feed ID in code</span>
+          </div>
+          <a
+            href="https://behold.so"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rh-btn rh-btn-gold rh-btn-sm"
+          >
+            Set up free →
+          </a>
         </div>
       )}
 
