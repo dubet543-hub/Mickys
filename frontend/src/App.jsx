@@ -22,6 +22,7 @@ import { ReturnsPage } from './pages/ReturnsPage';
 import { TermsPage } from './pages/TermsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { CookiesPage } from './pages/CookiesPage';
+import { PlanBPage } from './pages/PlanBPage';
 
 export default function App() {
   useScrollReveal();
@@ -138,6 +139,8 @@ export default function App() {
       {view.name === 'privacy' && <PrivacyPage />}
 
       {view.name === 'cookies' && <CookiesPage />}
+
+      {view.name === 'planb' && <PlanBPage />}
 
       {view.name === 'contact' && <ContactPage />}
 

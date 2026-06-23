@@ -26,6 +26,7 @@ export function Footer({ onNavigate }) {
           <button type="button" onClick={() => onNavigate({ name: 'terms' })}>Terms of Use</button>
           <button type="button" onClick={() => onNavigate({ name: 'privacy' })}>Privacy Policy</button>
           <button type="button" onClick={() => onNavigate({ name: 'cookies' })}>Cookies Policy</button>
+          <button type="button" onClick={() => onNavigate({ name: 'planb' })}>Plan B Kitchens (B2B)</button>
         </nav>
       </div>
     </footer>
