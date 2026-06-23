@@ -35,6 +35,7 @@ export function Header({ solid, cartCount, menuOpen, onCart, onHome, onMenu, onN
       <nav className="navLinks" aria-label="Main navigation">
         <button type="button" onClick={() => onNavigate({ name: 'products' })}>Products</button>
         <button type="button" onClick={() => onNavigate({ name: 'rushhour' })}>Rush Hour Ka Right Hand</button>
+        <button type="button" onClick={() => onNavigate({ name: 'planb' })}>LPG Saver</button>
         <button type="button" onClick={() => onNavigate({ name: 'about' })}>About</button>
         <button type="button" onClick={() => onNavigate({ name: 'recipes' })}>Recipes</button>
         <button type="button" onClick={() => onNavigate({ name: 'contact' })}>Contact</button>
@@ -67,6 +68,7 @@ export function MobileMenu({ onNavigate }) {
     <nav className="mobileMenu" id="mobile-menu" aria-label="Mobile navigation">
       <button type="button" onClick={() => onNavigate({ name: 'products' })}>Products</button>
       <button type="button" onClick={() => onNavigate({ name: 'rushhour' })}>Rush Hour Ka Right Hand</button>
+      <button type="button" onClick={() => onNavigate({ name: 'planb' })}>LPG Saver</button>
       <button type="button" onClick={() => onNavigate({ name: 'about' })}>About</button>
       <button type="button" onClick={() => onNavigate({ name: 'recipes' })}>Recipes</button>
       <button type="button" onClick={() => onNavigate({ name: 'contact' })}>Contact</button>
