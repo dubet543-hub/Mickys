@@ -229,7 +229,7 @@ export function HomePage({ onNavigate }) {
       <StoryBand />
 
       {/* ── PROCESS ── */}
-      <section className="cn-section">
+      <section className="cn-section cn-process">
         <Reveal>
           <span className="cn-kicker">How it works</span>
         </Reveal>
