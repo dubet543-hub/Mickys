@@ -248,6 +248,36 @@
 }
 .rh-cta-assure svg { color: var(--gold); }
 
+/* ── INSTAGRAM FEED ───────────────────────────── */
+.rh-instagram {
+  padding: clamp(64px, 9vw, 120px) clamp(20px, 6vw, 90px);
+  background: var(--wine);
+  text-align: center;
+}
+.rh-instagram .rh-section-head h2 { color: #fff; }
+.rh-instagram .rh-section-head p { color: color-mix(in srgb, #fff 75%, var(--wine)); }
+.rh-instagram .rh-kicker { color: var(--gold); }
+.rh-instagram .rh-kicker::before { background: var(--gold); }
+.rh-instagram-widget {
+  max-width: 1180px; margin: 0 auto clamp(32px, 4vw, 48px);
+}
+.rh-instagram-widget behold-widget { display: block; width: 100%; }
+.rh-instagram-placeholder {
+  max-width: 400px; margin: 0 auto clamp(32px, 4vw, 48px);
+  border: 2px dashed color-mix(in srgb, var(--gold) 40%, transparent);
+  border-radius: 18px; padding: 48px 32px; display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
+}
+.rh-ig-icon { color: var(--gold); }
+.rh-instagram-placeholder p {
+  font-family: var(--font-headline); font-weight: 700; font-size: 20px;
+  color: #fff; margin: 0;
+}
+.rh-instagram-placeholder span {
+  font-size: 13px; color: color-mix(in srgb, #fff 60%, var(--wine));
+}
+.rh-instagram-follow { display: flex; justify-content: center; margin-top: 8px; }
+
 /* ── RESPONSIVE ───────────────────────────────── */
 @media (max-width: 980px) {
   .rh-pain-grid, .rh-product-grid { grid-template-columns: repeat(2, 1fr); }

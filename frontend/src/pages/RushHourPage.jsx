@@ -1,7 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import {
   ArrowRight, Phone, Download,
-  ShieldCheck, Factory, BadgeCheck, Soup, ChefHat,
+  ShieldCheck, Factory, BadgeCheck, Soup, ChefHat, Instagram,
 } from 'lucide-react';
 import { GaugeIcon, PotIcon, ChefHatIcon, BarsIcon } from '../components/ui/rush-icons';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
@@ -44,6 +44,70 @@ const SCALE_POINTS = [
   'Consistent supply, pan-India distribution',
   'Developed for high-volume professional kitchens',
 ];
+
+/* ── INSTAGRAM FEED COMPONENT ──────────────────────────────────────────────
+   Uses Behold.so (free) to embed live Instagram posts.
+   Setup: go to behold.so → connect @mickys.ki.zimmedari → copy your feed-id
+   and replace BEHOLD_FEED_ID below.
+   ────────────────────────────────────────────────────────────────────────── */
+const BEHOLD_FEED_ID = 'YOUR_BEHOLD_FEED_ID'; // ← replace after behold.so setup
+
+function InstagramFeed() {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || BEHOLD_FEED_ID === 'YOUR_BEHOLD_FEED_ID') return;
+
+    const widget = document.createElement('behold-widget');
+    widget.setAttribute('feed-id', BEHOLD_FEED_ID);
+    container.appendChild(widget);
+
+    if (!document.querySelector('script[data-behold]')) {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'https://w.behold.so/widget.js';
+      script.setAttribute('data-behold', '1');
+      document.head.appendChild(script);
+    }
+
+    return () => { if (container.contains(widget)) container.removeChild(widget); };
+  }, []);
+
+  const isConfigured = BEHOLD_FEED_ID !== 'YOUR_BEHOLD_FEED_ID';
+
+  return (
+    <section className="rh-instagram">
+      <Reveal className="rh-section-head">
+        <span className="rh-kicker">Follow along</span>
+        <h2>Kitchens on <em>Instagram</em></h2>
+        <p>See how professional kitchens across India use Micky's every single day.</p>
+      </Reveal>
+
+      {isConfigured ? (
+        <div ref={containerRef} className="rh-instagram-widget" />
+      ) : (
+        /* Placeholder shown until behold.so is configured */
+        <div className="rh-instagram-placeholder">
+          <Instagram size={40} className="rh-ig-icon" />
+          <p>@mickys.ki.zimmedari</p>
+          <span>Live feed loads here after Behold.so setup</span>
+        </div>
+      )}
+
+      <div className="rh-instagram-follow">
+        <a
+          href="https://www.instagram.com/mickys.ki.zimmedari"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rh-btn rh-btn-gold"
+        >
+          <Instagram size={18} /> Follow @mickys.ki.zimmedari
+        </a>
+      </div>
+    </section>
+  );
+}
 
 function Hero({ onNavigate }) {
   const ref = useRef(null);
@@ -131,6 +195,9 @@ export function RushHourPage({ onNavigate, addToCart }) {
           ))}
         </div>
       </section>
+
+      {/* ── Instagram feed ──────────────────────────── */}
+      <InstagramFeed />
 
       {/* ── Built with scale ────────────────────────── */}
       <section className="rh-scale">
