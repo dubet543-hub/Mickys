@@ -50,7 +50,7 @@ const SCALE_POINTS = [
    Setup: go to behold.so → connect @mickys.ki.zimmedari → copy your feed-id
    and replace BEHOLD_FEED_ID below.
    ────────────────────────────────────────────────────────────────────────── */
-const BEHOLD_FEED_ID = 'YOUR_BEHOLD_FEED_ID'; // ← replace after behold.so setup
+const BEHOLD_FEED_ID = 'sxLLd1UtsQ6YCYPEc9vp';
 
 function InstagramFeed() {
   const containerRef = useRef(null);
