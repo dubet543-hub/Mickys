@@ -1,0 +1,297 @@
+import React, { useState, useEffect } from 'react';
+import { Award, Check, ChefHat, ChevronRight, Clock, Flame, Heart, Leaf, Package, ShieldCheck, Sparkles, Timer, Truck, Zap } from 'lucide-react';
+import { BUNDLES, HOME_FEATURES, PREP_STEPS, RECIPES, TESTIMONIALS } from '../data/siteData';
+import { RecipeCard, SectionHeader } from '../components/ui';
+import { WhyChooseSection } from '../components/WhyChooseSection';
+import ToonhubHero from '../components/ui/toonhub-hero';
+import { Reveal, useTilt, useEntrance, motion } from '../components/ui/motion3d';
+
+const FEATURE_ICONS = { Award, Leaf, ShieldCheck, Zap };
+
+const OFFER_FEATURES = [
+  { icon: Clock, title: 'Zero Prep Time', desc: 'Open the pouch and you’re already halfway to dinner.' },
+  { icon: Flame, title: 'Simplified Cooking', desc: 'Chef-developed bases with minimal finishing steps.' },
+  { icon: Leaf, title: 'Healthy & Balanced', desc: 'Real ingredients, no additives, no compromise.' },
+  { icon: Heart, title: 'Home-Like Taste', desc: 'Recipes that bring back familiar comfort.' },
+  { icon: Zap, title: 'Next Level Convenience', desc: 'Restaurant quality in under 10 minutes.' },
+  { icon: ChefHat, title: 'Chef Crafted Recipes', desc: 'Developed in professional hospitality kitchens.' },
+];
+
+/* ── Cards: each is itself the grid item (no wrappers) and combines a
+   scroll-in entrance with a pointer-driven 3D tilt. ── */
+
+function BundleCard3D({ bundle, index, onNavigate }) {
+  const tilt = useTilt({ max: 8 });
+  const enter = useEntrance(index * 0.1);
+  return (
+    <motion.button
+      type="button"
+      className="bundleCard"
+      onClick={() => onNavigate({ name: 'products' })}
+      {...enter}
+      {...tilt}
+    >
+      <span className="bundleCardShine" aria-hidden="true" />
+      <span className="bundleCardTag">{bundle.tag}</span>
+      <div className="bundleCardImg" style={{ transform: 'translateZ(40px)' }}>
+        <img src={bundle.image} alt={bundle.name} loading="lazy" />
+      </div>
+      <div className="bundleCardBody">
+        <strong>{bundle.name}</strong>
+        <small>{bundle.description}</small>
+        <span className="bundleCardCta">
+          Shop bundle <ChevronRight size={16} />
+        </span>
+      </div>
+    </motion.button>
+  );
+}
+
+function FeatureCard3D({ feature, i }) {
+  const Icon = FEATURE_ICONS[feature.icon];
+  const tilt = useTilt({ max: 10 });
+  const enter = useEntrance(i * 0.08);
+  return (
+    <motion.article className="featureCard" style={{ '--i': i, ...tilt.style }} {...enter} ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} whileHover={tilt.whileHover}>
+      <span className="featureCardGlow" aria-hidden="true" />
+      <div className="featureCardIcon" style={{ transform: 'translateZ(30px)' }}>
+        <span className="featureCardRing" aria-hidden="true" />
+        <span className="featureCardRing featureCardRingTwo" aria-hidden="true" />
+        <Icon size={28} strokeWidth={2.2} />
+      </div>
+      <div className="featureCardText">
+        <strong>{feature.title}</strong>
+        <small>{feature.desc}</small>
+      </div>
+      <span className="featureCardIndex" aria-hidden="true">0{i + 1}</span>
+    </motion.article>
+  );
+}
+
+function OfferCard3D({ icon: Icon, title, desc, index }) {
+  const tilt = useTilt({ max: 9 });
+  const enter = useEntrance(index * 0.07);
+  return (
+    <motion.article className="offerCard2" style={{ '--offer-i': index, ...tilt.style }} {...enter} ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} whileHover={tilt.whileHover}>
+      <span className="offerCardSheen" aria-hidden="true" />
+      <span className="offerCardIndex">{String(index + 1).padStart(2, '0')}</span>
+      <div className="offerCardIcon" style={{ transform: 'translateZ(28px)' }}>
+        <Icon size={26} strokeWidth={1.9} />
+      </div>
+      <div className="offerCardBody">
+        <h3>{title}</h3>
+        <p>{desc}</p>
+      </div>
+    </motion.article>
+  );
+}
+
+function TestimonialCard3D({ name, city, quote, index }) {
+  const tilt = useTilt({ max: 7 });
+  const enter = useEntrance(index * 0.08);
+  return (
+    <motion.article className="testimonialCard" {...enter} ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} whileHover={tilt.whileHover} style={tilt.style}>
+      <div className="stars" aria-label="5 out of 5 stars">5/5</div>
+      <p>"{quote}"</p>
+      <strong>{name}</strong>
+      <span>{city}</span>
+    </motion.article>
+  );
+}
+
+export function HomePage({ onNavigate }) {
+  return (
+    <main>
+      {/* ── ToonHub character carousel hero (now with 3D depth layer) ── */}
+      <ToonhubHero onDiscover={() => onNavigate({ name: 'products' })} />
+
+      <section className="marquee" aria-label="Brand promises">
+        <div className="marqueeTrack">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div className="marqueeGroup" key={index}>
+              <span>100% Natural</span>
+              <span>Ready to Cook</span>
+              <span>No Preservatives</span>
+              <span>Advanced Retort Technology</span>
+              <span>Professional Kitchens</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section productsSection homeProductsSection">
+        <Reveal>
+          <SectionHeader
+            label="Our Range"
+            title={<>Signature <span className="titleAccent">gravies</span> and <span className="titleAccent">cooking</span> essentials</>}
+            text="Every pouch is crafted with real ingredients, traditional recipes and advanced retort technology. No shortcuts, no artificial additives, just consistent restaurant-style flavour."
+          />
+        </Reveal>
+        <div className="bundleGrid">
+          {BUNDLES.map((bundle, i) => (
+            <BundleCard3D key={bundle.id} bundle={bundle} index={i} onNavigate={onNavigate} />
+          ))}
+        </div>
+      </section>
+
+      <section className="featureStrip" aria-label="Micky's highlights">
+        <div className="featureStripAurora" aria-hidden="true" />
+        <div className="featureStripGrid">
+          {HOME_FEATURES.map((feature, i) => (
+            <FeatureCard3D key={feature.title} feature={feature} i={i} />
+          ))}
+        </div>
+      </section>
+
+      <section className="storySection homeStorySection">
+        <div className="storyBgWord" aria-hidden="true">MICKY'S</div>
+        <Reveal className="storyImage" y={0}>
+          <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=1100&q=80" alt="Fresh Indian cooking ingredients" />
+          <div className="storyYearBadge">
+            <strong>Since 1985</strong>
+            <span>Hospitality Legacy</span>
+          </div>
+          <div className="storyBadge">100%<span>Natural Ingredients</span></div>
+        </Reveal>
+        <Reveal className="storyCopy" delay={0.15}>
+          <p className="tag">What Makes Us Special</p>
+          <h2>Made the right way. <em>Every time.</em></h2>
+          <p>
+            Micky's by CP Foods brings chef-developed ready-to-cook bases from real
+            hospitality kitchens into faster everyday execution. It keeps the prep simple
+            while leaving the final flavour in your hands.
+          </p>
+          <div className="storyFeatureList">
+            <div className="storyFeatureRow">
+              <div className="storyFeatureIcon"><Sparkles size={18} /></div>
+              <div>
+                <strong>100% Natural</strong>
+                <span>No artificial colours, flavours or additives.</span>
+              </div>
+            </div>
+            <div className="storyFeatureRow">
+              <div className="storyFeatureIcon"><Package size={18} /></div>
+              <div>
+                <strong>Ready in Minutes</strong>
+                <span>Open, finish with your ingredients, and serve fast.</span>
+              </div>
+            </div>
+            <div className="storyFeatureRow">
+              <div className="storyFeatureIcon"><Check size={18} /></div>
+              <div>
+                <strong>No Preservatives</strong>
+                <span>Retort-sealed quality with dependable shelf life.</span>
+              </div>
+            </div>
+            <div className="storyFeatureRow">
+              <div className="storyFeatureIcon"><Truck size={18} /></div>
+              <div>
+                <strong>Kitchen Reliable</strong>
+                <span>Consistent taste, colour and texture across services.</span>
+              </div>
+            </div>
+          </div>
+          <button className="storyCta" type="button" onClick={() => onNavigate({ name: 'products' })}>
+            Explore our range <ChevronRight size={16} />
+          </button>
+        </Reveal>
+      </section>
+
+      <section className="offerFeatureSection">
+        <span className="offerOrb offerOrb1" aria-hidden="true" />
+        <span className="offerOrb offerOrb2" aria-hidden="true" />
+
+        <Reveal className="offerFeatureHeader">
+          <p className="offerFeatureTag"><span className="offerTagDot" aria-hidden="true" />The Micky's Promise</p>
+          <h2>What We <span className="offerFeatureAccent">Offer</span></h2>
+          <p>The comfort of tradition, the ease of modern life. We understand the value of time, the importance of nutrition, and the joy of sharing meals that feel like home.</p>
+        </Reveal>
+
+        <div className="offerShowcase">
+          <Reveal className="offerShowcaseMedia" y={0} delay={0.1}>
+            <span className="offerMediaRing" aria-hidden="true" />
+            <span className="offerMediaRing offerMediaRingOuter" aria-hidden="true" />
+            <div className="offerMediaGlass">
+              <img src="https://mickys.in/wp-content/uploads/2026/03/Screenshot_2026-03-13_160834-removebg-preview-1-1.png" alt="Micky's signature dish plated and ready to serve" />
+            </div>
+
+            <div className="offerFloatBadge offerFloatBadgeTop">
+              <span className="offerFloatIcon"><Timer size={18} strokeWidth={2.4} /></span>
+              <div>
+                <strong>Under 10</strong>
+                <small>minutes to plate</small>
+              </div>
+            </div>
+
+            <div className="offerFloatBadge offerFloatBadgeBottom">
+              <span className="offerFloatIcon"><Sparkles size={18} strokeWidth={2.4} /></span>
+              <div>
+                <strong>100% Natural</strong>
+                <small>no preservatives</small>
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="offerCardGrid">
+            {OFFER_FEATURES.map(({ icon, title, desc }, index) => (
+              <OfferCard3D key={title} icon={icon} title={title} desc={desc} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <WhyChooseSection />
+
+      <section className="section prepSection">
+        <Reveal>
+          <SectionHeader label="Simple Process" title="Ready in three easy steps" />
+        </Reveal>
+        <div className="prepTimeline">
+          {PREP_STEPS.map((step, index) => (
+            <React.Fragment key={step.number}>
+              <Reveal className="prepCard" delay={index * 0.12}>
+                <span>{step.number}</span>
+                <div className="prepCardImg">
+                  <img src={step.img} alt={step.title} />
+                </div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </Reveal>
+              {index < PREP_STEPS.length - 1 && <strong className="thenLabel">Then</strong>}
+            </React.Fragment>
+          ))}
+        </div>
+      </section>
+
+      <section className="section recipesSection homeRecipesSection">
+        <Reveal>
+          <SectionHeader label="Recipe Ideas" title="Cook something amazing tonight" />
+        </Reveal>
+        <Reveal className="recipesGrid" y={24}>
+          {RECIPES.map((recipe) => <RecipeCard key={recipe.title} recipe={recipe} />)}
+        </Reveal>
+      </section>
+
+      <section className="section testimonialsSection homeTestimonialsSection">
+        <Reveal>
+          <SectionHeader label="Reviews" title="What our customers say" />
+        </Reveal>
+        <div className="testimonialsGrid">
+          {TESTIMONIALS.map(([name, city, quote], index) => (
+            <TestimonialCard3D key={name} name={name} city={city} quote={quote} index={index} />
+          ))}
+        </div>
+      </section>
+
+      <Reveal as="section" className="newsletterSection homeCtaSection">
+        <p className="tag">Stay Connected</p>
+        <h2>Get recipes and offers straight to your inbox.</h2>
+        <p>Join food lovers and professional kitchens who want smarter prep, better control and more reliable flavour.</p>
+        <form onSubmit={(event) => event.preventDefault()}>
+          <input type="email" placeholder="Your email address" aria-label="Email address" required />
+          <button type="submit">Subscribe</button>
+        </form>
+      </Reveal>
+    </main>
+  );
+}

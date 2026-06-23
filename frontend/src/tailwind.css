@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/*
+  Tailwind base comes first so the site's custom styles.css
+  can override it freely — no conflicts with existing CSS.
+*/

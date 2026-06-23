@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product — Micky's</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="product.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body class="product-body">
+
+  <!-- Nav (same as index) -->
+  <nav class="nav scrolled" id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Micky's</a>
+      <ul class="nav-links">
+        <li><a href="index.html#products">Products</a></li>
+        <li><a href="index.html#story">About</a></li>
+        <li><a href="index.html#recipes">Recipes</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-cart-btn" id="cartBtn" aria-label="Open cart">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+        <a href="shop.html" class="nav-shop-btn">Shop Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <div class="container">
+      <a href="index.html">Home</a> › <a href="shop.html">Products</a> › <span id="breadcrumbName">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Product Detail -->
+  <main class="pd-main container" id="pdMain">
+
+    <!-- Image Panel -->
+    <div class="pd-images">
+      <div class="pd-main-img-wrap" id="pdMainImgWrap">
+        <img id="pdMainImg" src="" alt="Product">
+        <span class="pd-badge" id="pdBadge" style="display:none"></span>
+      </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="pd-info">
+      <span class="tag" id="pdCategory"></span>
+      <h1 class="pd-title" id="pdTitle">Loading...</h1>
+      <p class="pd-tagline" id="pdTagline"></p>
+
+      <div class="pd-price-row">
+        <span class="pd-price" id="pdPrice"></span>
+        <span class="pd-mrp" id="pdMrp"></span>
+        <span class="pd-savings" id="pdSavings"></span>
+      </div>
+
+      <div class="pd-meta">
+        <div class="pd-meta-item"><span>⚖️</span><span id="pdWeight"></span></div>
+        <div class="pd-meta-item"><span>👨‍👩‍👧‍👦</span><span id="pdServes"></span></div>
+        <div class="pd-meta-item"><span>📅</span><span id="pdShelf"></span></div>
+      </div>
+
+      <p class="pd-description" id="pdDescription"></p>
+
+      <!-- Quantity + ATC -->
+      <div class="pd-atc-row">
+        <div class="pd-qty-wrap">
+          <button class="pd-qty-btn" id="pdQtyMinus">−</button>
+          <span class="pd-qty-val" id="pdQtyVal">1</span>
+          <button class="pd-qty-btn" id="pdQtyPlus">+</button>
+        </div>
+        <button class="pd-atc-btn" id="pdATCBtn">Add to Cart</button>
+      </div>
+      <button class="pd-buy-btn" id="pdBuyBtn">Buy Now →</button>
+
+      <!-- Trust row -->
+      <div class="pd-trust">
+        <span>🔒 Secure Checkout</span>
+        <span>🚚 Fast Delivery</span>
+        <span>✅ No Preservatives</span>
+      </div>
+
+      <!-- Accordion -->
+      <div class="pd-accordion">
+        <div class="acc-item">
+          <button class="acc-trigger">Ingredients <span>+</span></button>
+          <div class="acc-body"><p id="pdIngredients"></p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-trigger">How to Use <span>+</span></button>
+          <div class="acc-body">
+            <ol>
+              <li>Open the retort pouch — no refrigeration needed.</li>
+              <li>Add your choice of protein (chicken, paneer, vegetables).</li>
+              <li>Cook on medium heat for 8–10 minutes.</li>
+              <li>Serve hot with rice, roti or naan.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-trigger">Why Micky's? <span>+</span></button>
+          <div class="acc-body">
+            <p>100% natural ingredients, no artificial preservatives, advanced retort technology for long shelf life — and genuine restaurant-style flavour in every pouch.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Related Products -->
+  <section class="pd-related">
+    <div class="container">
+      <h2 class="section-title" style="margin-bottom:2rem">You May Also <em>Like</em></h2>
+      <div class="products-grid" id="pdRelated"></div>
+    </div>
+  </section>
+
+  <!-- Cart Drawer (same as index) -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+      <div class="cart-drawer-title">
+        <h3>Your Cart</h3>
+        <span class="cart-drawer-count" id="cartDrawerCount">0 items</span>
+      </div>
+      <button class="cart-close-btn" id="cartClose">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="free-shipping-bar" id="freeShippingBar">
+      <p id="freeShippingMsg">Add <strong id="freeShippingAmt">₹500</strong> more for free shipping!</p>
+      <div class="shipping-progress"><div class="shipping-fill" id="shippingFill"></div></div>
+    </div>
+    <div class="cart-empty" id="cartEmpty">
+      <div class="cart-empty-icon">🛒</div>
+      <p>Your cart is empty</p>
+      <small>Add some delicious Micky's products!</small>
+      <button class="btn-primary" id="cartEmptyShop">Start Shopping</button>
+    </div>
+    <div class="cart-items-list" id="cartItemsList"></div>
+    <div class="cart-drawer-footer" id="cartDrawerFooter">
+      <div class="cart-totals">
+        <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
+        <div class="cart-row"><span>Shipping</span><span id="cartShipping" class="green">Free</span></div>
+        <div class="cart-row total"><span>Total</span><span id="cartTotal">₹0</span></div>
+      </div>
+      <a href="checkout.html" class="btn-checkout">Proceed to Checkout →</a>
+      <button class="btn-continue-shop" id="cartContinueShopping">Continue Shopping</button>
+    </div>
+  </aside>
+  <div class="cart-bubble" id="cartBubble"></div>
+
+  <script src="script.js"></script>
+  <script src="product.js"></script>
+</body>
+</html>
