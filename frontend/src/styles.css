@@ -90,7 +90,6 @@ p {
   font-weight: 500;
   font-size: clamp(1rem, 0.9rem + 0.4vw, 1.125rem);
   line-height: 1.6;
-  color: #f3bb16 !important;
 }
 
 .loader {
