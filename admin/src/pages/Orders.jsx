@@ -97,6 +97,8 @@ function OrderModal({ order, onClose, onUpdated }) {
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [shipBusy, setShipBusy] = useState(false);
+  const [shipError, setShipError] = useState('');
 
   async function save() {
     setBusy(true);
@@ -113,6 +115,20 @@ function OrderModal({ order, onClose, onUpdated }) {
       setError(e.message);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function createShipment() {
+    setShipBusy(true);
+    setShipError('');
+    try {
+      const { order: updated } = await api.post(`/shipping/${order._id}/create`);
+      onUpdated(updated);
+      setTracking(updated.trackingNumber || '');
+    } catch (e) {
+      setShipError(e.message);
+    } finally {
+      setShipBusy(false);
     }
   }
 
@@ -155,6 +171,22 @@ function OrderModal({ order, onClose, onUpdated }) {
           <p className="kv">
             {order.paymentMethod?.toUpperCase()} · <StatusBadge value={order.paymentStatus} />
           </p>
+
+          <h3 className="sub mt">Shipment (Shiprocket)</h3>
+          {order.shiprocket?.shipmentId ? (
+            <>
+              <p className="kv muted">Shipment ID: {order.shiprocket.shipmentId}</p>
+              {order.shiprocket.awbCode && <p className="kv muted">AWB: {order.shiprocket.awbCode}</p>}
+              {order.shiprocket.courierName && <p className="kv muted">Courier: {order.shiprocket.courierName}</p>}
+              {order.shiprocket.status && <p className="kv muted">Status: {order.shiprocket.status}</p>}
+            </>
+          ) : (
+            <p className="kv muted">No shipment created yet.</p>
+          )}
+          <ErrorNote message={shipError} />
+          <button className="btn" type="button" onClick={createShipment} disabled={shipBusy}>
+            {shipBusy ? 'Creating…' : order.shiprocket?.shipmentId ? 'Re-push to Shiprocket' : 'Create Shiprocket shipment'}
+          </button>
         </section>
       </div>
 

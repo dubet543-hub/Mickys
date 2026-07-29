@@ -1,13 +1,24 @@
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { CheckoutBlock } from '../components/ui';
+import { api, loadRazorpayScript } from '../utils/api';
 
 export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBack }) {
   const [payment, setPayment] = useState('online');
   const [coupon, setCoupon] = useState('');
   const [discount, setDiscount] = useState(0);
   const [placedOrder, setPlacedOrder] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({
+    name: '', email: '', phone: '',
+    line1: '', line2: '', city: '', state: '', pincode: '',
+  });
   const finalTotal = Math.max(0, total - discount);
+
+  function updateField(field, value) {
+    setForm((f) => ({ ...f, [field]: value }));
+  }
 
   function applyCoupon() {
     const code = coupon.trim().toUpperCase();
@@ -16,12 +27,82 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
     if (code === 'FREESHIP') setDiscount(shipping);
   }
 
-  function placeOrder(event) {
+  async function placeOrder(event) {
     event.preventDefault();
-    if (!cart.length) return;
-    const orderId = `MKY${Date.now().toString().slice(-8)}`;
-    setPlacedOrder(orderId);
-    clearCart();
+    if (!cart.length || submitting) return;
+    setError('');
+    setSubmitting(true);
+
+    const orderPayload = {
+      user: { name: form.name, email: form.email, phone: form.phone },
+      items: cart.map((item) => ({
+        productId: item.id, name: item.name, price: item.price, qty: item.qty, image: item.image,
+      })),
+      shipping: {
+        line1: form.line1, line2: form.line2, city: form.city, state: form.state, pincode: form.pincode,
+      },
+      subtotal,
+      discount,
+      couponCode: coupon || undefined,
+      shippingCost: shipping,
+      total: finalTotal,
+      paymentMethod: payment,
+    };
+
+    try {
+      const { order } = await api.post('/orders', orderPayload);
+
+      if (payment === 'cod') {
+        setPlacedOrder(order.orderId);
+        clearCart();
+        return;
+      }
+
+      await loadRazorpayScript();
+      const { order: razorpayOrder, key } = await api.post('/payment/create-order', {
+        amount: finalTotal,
+        receipt: order.orderId,
+      });
+
+      const rzp = new window.Razorpay({
+        key,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        order_id: razorpayOrder.id,
+        name: "Micky's Foods",
+        description: `Order ${order.orderId}`,
+        prefill: { name: form.name, email: form.email, contact: form.phone },
+        handler: async (response) => {
+          try {
+            await api.post('/payment/verify', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: order._id,
+            });
+            setPlacedOrder(order.orderId);
+            clearCart();
+          } catch (err) {
+            setError(err.message || 'Payment verification failed. Contact support with your order ID.');
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: () => setSubmitting(false),
+        },
+        theme: { color: '#c1272d' },
+      });
+      rzp.on('payment.failed', () => {
+        setError('Payment failed. Please try again.');
+        setSubmitting(false);
+      });
+      rzp.open();
+      return;
+    } catch (err) {
+      setError(err.message || 'Something went wrong placing your order.');
+    }
+    setSubmitting(false);
   }
 
   if (placedOrder) {
@@ -45,18 +126,18 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
       <form className="checkoutGrid" onSubmit={placeOrder}>
         <section className="checkoutForm">
           <CheckoutBlock title="Contact Information">
-            <input required placeholder="Full Name" aria-label="Full name" />
+            <input required placeholder="Full Name" aria-label="Full name" value={form.name} onChange={(e) => updateField('name', e.target.value)} />
             <div className="formRow">
-              <input required type="email" placeholder="Email" aria-label="Email address" />
-              <input required type="tel" placeholder="Phone" aria-label="Phone number" />
+              <input required type="email" placeholder="Email" aria-label="Email address" value={form.email} onChange={(e) => updateField('email', e.target.value)} />
+              <input required type="tel" placeholder="Phone" aria-label="Phone number" value={form.phone} onChange={(e) => updateField('phone', e.target.value)} />
             </div>
           </CheckoutBlock>
           <CheckoutBlock title="Shipping Address">
-            <input required placeholder="Address Line 1" aria-label="Address line 1" />
-            <input placeholder="Address Line 2" aria-label="Address line 2" />
+            <input required placeholder="Address Line 1" aria-label="Address line 1" value={form.line1} onChange={(e) => updateField('line1', e.target.value)} />
+            <input placeholder="Address Line 2" aria-label="Address line 2" value={form.line2} onChange={(e) => updateField('line2', e.target.value)} />
             <div className="formRow thirds">
-              <input required placeholder="City" aria-label="City" />
-              <select required defaultValue="" aria-label="State">
+              <input required placeholder="City" aria-label="City" value={form.city} onChange={(e) => updateField('city', e.target.value)} />
+              <select required value={form.state} onChange={(e) => updateField('state', e.target.value)} aria-label="State">
                 <option value="" disabled>State</option>
                 <option>Maharashtra</option>
                 <option>Delhi</option>
@@ -64,7 +145,7 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
                 <option>Tamil Nadu</option>
                 <option>Gujarat</option>
               </select>
-              <input required placeholder="PIN Code" maxLength={6} aria-label="PIN code" />
+              <input required placeholder="PIN Code" maxLength={6} aria-label="PIN code" value={form.pincode} onChange={(e) => updateField('pincode', e.target.value)} />
             </div>
           </CheckoutBlock>
           <CheckoutBlock title="Payment Method">
@@ -79,8 +160,9 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
               </label>
             </div>
           </CheckoutBlock>
-          <button className="placeOrderButton" type="submit" disabled={!cart.length}>
-            Place Order <span>₹{finalTotal.toLocaleString('en-IN')}</span>
+          {error && <p className="formError" role="alert">{error}</p>}
+          <button className="placeOrderButton" type="submit" disabled={!cart.length || submitting}>
+            {submitting ? 'Processing…' : 'Place Order'} <span>₹{finalTotal.toLocaleString('en-IN')}</span>
           </button>
         </section>
         <aside className="orderSummary">

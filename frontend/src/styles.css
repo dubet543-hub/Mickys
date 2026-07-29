@@ -3681,6 +3681,15 @@ button.ghostButton {
   color: var(--muted);
 }
 
+.formError {
+  color: #c1272d;
+  background: rgba(193, 39, 45, 0.08);
+  border: 1px solid rgba(193, 39, 45, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+
 .placeOrderButton {
   width: 100%;
 }

@@ -2,6 +2,7 @@ const express = require('express');
 const Order = require('../models/Order');
 const { protect, admin } = require('../middleware/auth');
 const { sendOrderConfirmation, sendStatusUpdate } = require('../utils/sendEmail');
+const shiprocket = require('../utils/shiprocket');
 
 const router = express.Router();
 
@@ -12,6 +13,13 @@ router.post('/', async (req, res, next) => {
     sendOrderConfirmation(order).catch((err) => {
       console.error(`Order email failed: ${err.message}`);
     });
+
+    // COD orders ship immediately; prepaid orders ship once payment is verified.
+    if (order.paymentMethod === 'cod') {
+      shiprocket.createShipment(order).catch((err) => {
+        console.error(`Shiprocket shipment creation failed for ${order.orderId}: ${err.message}`);
+      });
+    }
 
     res.status(201).json({ success: true, order });
   } catch (err) {
