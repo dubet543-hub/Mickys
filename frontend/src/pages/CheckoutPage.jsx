@@ -4,7 +4,6 @@ import { CheckoutBlock } from '../components/ui';
 import { api, loadRazorpayScript } from '../utils/api';
 
 export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBack }) {
-  const [payment, setPayment] = useState('online');
   const [coupon, setCoupon] = useState('');
   const [discount, setDiscount] = useState(0);
   const [placedOrder, setPlacedOrder] = useState(null);
@@ -46,17 +45,11 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
       couponCode: coupon || undefined,
       shippingCost: shipping,
       total: finalTotal,
-      paymentMethod: payment,
+      paymentMethod: 'online',
     };
 
     try {
       const { order } = await api.post('/orders', orderPayload);
-
-      if (payment === 'cod') {
-        setPlacedOrder(order.orderId);
-        clearCart();
-        return;
-      }
 
       await loadRazorpayScript();
       const { order: razorpayOrder, key } = await api.post('/payment/create-order', {
@@ -150,13 +143,9 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
           </CheckoutBlock>
           <CheckoutBlock title="Payment Method">
             <div className="paymentGrid">
-              <label className={payment === 'online' ? 'selected' : ''}>
-                <input type="radio" name="payment" value="online" checked={payment === 'online'} onChange={() => setPayment('online')} />
+              <label className="selected">
+                <input type="radio" name="payment" value="online" checked readOnly />
                 <span>Pay Online<small>UPI, cards and net banking</small></span>
-              </label>
-              <label className={payment === 'cod' ? 'selected' : ''}>
-                <input type="radio" name="payment" value="cod" checked={payment === 'cod'} onChange={() => setPayment('cod')} />
-                <span>Cash on Delivery<small>Pay when your order arrives</small></span>
               </label>
             </div>
           </CheckoutBlock>
