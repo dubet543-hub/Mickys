@@ -3681,6 +3681,13 @@ button.ghostButton {
   color: var(--muted);
 }
 
+.pincodeHint {
+  display: block;
+  margin-top: -8px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .formError {
   color: #c1272d;
   background: rgba(193, 39, 45, 0.08);

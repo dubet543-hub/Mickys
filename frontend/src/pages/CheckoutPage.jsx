@@ -1,7 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { CheckoutBlock } from '../components/ui';
 import { api, loadRazorpayScript } from '../utils/api';
+
+const CHECKOUT_DETAILS_KEY = 'mickys_checkout_details';
+
+function readStoredDetails() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CHECKOUT_DETAILS_KEY) || 'null');
+    if (saved && typeof saved === 'object') {
+      return { name: '', email: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '', ...saved };
+    }
+  } catch { /* ignore malformed data */ }
+  return { name: '', email: '', phone: '', line1: '', line2: '', city: '', state: '', pincode: '' };
+}
 
 export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBack }) {
   const [coupon, setCoupon] = useState('');
@@ -9,15 +21,45 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
   const [placedOrder, setPlacedOrder] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({
-    name: '', email: '', phone: '',
-    line1: '', line2: '', city: '', state: '', pincode: '',
-  });
+  const [form, setForm] = useState(readStoredDetails);
+  const [pincodeLookup, setPincodeLookup] = useState('idle'); // idle | loading | done | error
   const finalTotal = Math.max(0, total - discount);
+  const lastLookedUp = useRef('');
 
   function updateField(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
   }
+
+  useEffect(() => {
+    localStorage.setItem(CHECKOUT_DETAILS_KEY, JSON.stringify(form));
+  }, [form]);
+
+  // India Post's public pincode lookup — no API key required.
+  useEffect(() => {
+    const pincode = form.pincode.trim();
+    if (pincode.length !== 6 || !/^\d{6}$/.test(pincode) || pincode === lastLookedUp.current) return;
+
+    let cancelled = false;
+    setPincodeLookup('loading');
+    fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        const office = data?.[0]?.PostOffice?.[0];
+        if (data?.[0]?.Status === 'Success' && office) {
+          lastLookedUp.current = pincode;
+          setForm((f) => ({ ...f, city: office.District, state: office.State }));
+          setPincodeLookup('done');
+        } else {
+          setPincodeLookup('error');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setPincodeLookup('error');
+      });
+
+    return () => { cancelled = true; };
+  }, [form.pincode]);
 
   function applyCoupon() {
     const code = coupon.trim().toUpperCase();
@@ -75,6 +117,7 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
             });
             setPlacedOrder(order.orderId);
             clearCart();
+            localStorage.removeItem(CHECKOUT_DETAILS_KEY);
           } catch (err) {
             setError(err.message || 'Payment verification failed. Contact support with your order ID.');
           } finally {
@@ -130,16 +173,18 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
             <input placeholder="Address Line 2" aria-label="Address line 2" value={form.line2} onChange={(e) => updateField('line2', e.target.value)} />
             <div className="formRow thirds">
               <input required placeholder="City" aria-label="City" value={form.city} onChange={(e) => updateField('city', e.target.value)} />
-              <select required value={form.state} onChange={(e) => updateField('state', e.target.value)} aria-label="State">
-                <option value="" disabled>State</option>
-                <option>Maharashtra</option>
-                <option>Delhi</option>
-                <option>Karnataka</option>
-                <option>Tamil Nadu</option>
-                <option>Gujarat</option>
-              </select>
-              <input required placeholder="PIN Code" maxLength={6} aria-label="PIN code" value={form.pincode} onChange={(e) => updateField('pincode', e.target.value)} />
+              <input required placeholder="State" aria-label="State" value={form.state} onChange={(e) => updateField('state', e.target.value)} />
+              <input
+                required
+                placeholder="PIN Code"
+                maxLength={6}
+                aria-label="PIN code"
+                value={form.pincode}
+                onChange={(e) => updateField('pincode', e.target.value.replace(/\D/g, ''))}
+              />
             </div>
+            {pincodeLookup === 'loading' && <small className="pincodeHint">Looking up city/state…</small>}
+            {pincodeLookup === 'error' && <small className="pincodeHint">Couldn't auto-fill from that PIN — enter city/state manually.</small>}
           </CheckoutBlock>
           <CheckoutBlock title="Payment Method">
             <div className="paymentGrid">
