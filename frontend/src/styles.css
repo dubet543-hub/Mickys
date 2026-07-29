@@ -3701,13 +3701,19 @@ button.ghostButton {
 .razorpayBadge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 14px;
   padding: 10px 14px;
   border-radius: 8px;
   background: var(--surface-strong);
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+.razorpayBadge img {
+  height: 28px;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .razorpayBadge strong {

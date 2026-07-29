@@ -196,8 +196,8 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
               </label>
             </div>
             <div className="razorpayBadge">
-              <Lock size={14} />
-              <span>100% secure payments powered by <strong>Razorpay</strong></span>
+              <img src="https://badges.razorpay.com/badge-dark.png" alt="Razorpay Trusted Business" loading="lazy" />
+              <span>100% secure payments powered by Razorpay</span>
             </div>
           </CheckoutBlock>
           {error && <p className="formError" role="alert">{error}</p>}
