@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
 const OrderItemSchema = new mongoose.Schema({
-  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+  // The storefront catalog (frontend/src/data/siteData.js) uses its own
+  // slug-style ids, not Mongo ObjectIds, so this is stored as a plain string.
+  productId: String,
   name:      String,
   price:     Number,
   qty:       Number,
