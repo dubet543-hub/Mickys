@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Lock, Truck } from 'lucide-react';
 import { CheckoutBlock } from '../components/ui';
 import { api, loadRazorpayScript } from '../utils/api';
 
@@ -161,43 +161,54 @@ export function CheckoutPage({ cart, subtotal, shipping, total, clearCart, onBac
       </button>
       <form className="checkoutGrid" onSubmit={placeOrder}>
         <section className="checkoutForm">
-          <CheckoutBlock title="Contact Information">
-            <input required placeholder="Full Name" aria-label="Full name" value={form.name} onChange={(e) => updateField('name', e.target.value)} />
+          <CheckoutBlock title="Contact Information" step={1}>
+            <input required placeholder="Full Name" aria-label="Full name" autoComplete="name" value={form.name} onChange={(e) => updateField('name', e.target.value)} />
             <div className="formRow">
-              <input required type="email" placeholder="Email" aria-label="Email address" value={form.email} onChange={(e) => updateField('email', e.target.value)} />
-              <input required type="tel" placeholder="Phone" aria-label="Phone number" value={form.phone} onChange={(e) => updateField('phone', e.target.value)} />
+              <input required type="email" placeholder="Email" aria-label="Email address" autoComplete="email" value={form.email} onChange={(e) => updateField('email', e.target.value)} />
+              <input required type="tel" placeholder="Phone" aria-label="Phone number" autoComplete="tel" value={form.phone} onChange={(e) => updateField('phone', e.target.value)} />
             </div>
           </CheckoutBlock>
-          <CheckoutBlock title="Shipping Address">
-            <input required placeholder="Address Line 1" aria-label="Address line 1" value={form.line1} onChange={(e) => updateField('line1', e.target.value)} />
-            <input placeholder="Address Line 2" aria-label="Address line 2" value={form.line2} onChange={(e) => updateField('line2', e.target.value)} />
+          <CheckoutBlock title="Delivery Address" step={2}>
+            <input required placeholder="Address Line 1" aria-label="Address line 1" autoComplete="address-line1" value={form.line1} onChange={(e) => updateField('line1', e.target.value)} />
+            <input placeholder="Address Line 2" aria-label="Address line 2" autoComplete="address-line2" value={form.line2} onChange={(e) => updateField('line2', e.target.value)} />
             <div className="formRow thirds">
-              <input required placeholder="City" aria-label="City" value={form.city} onChange={(e) => updateField('city', e.target.value)} />
-              <input required placeholder="State" aria-label="State" value={form.state} onChange={(e) => updateField('state', e.target.value)} />
               <input
                 required
                 placeholder="PIN Code"
                 maxLength={6}
                 aria-label="PIN code"
+                autoComplete="postal-code"
+                inputMode="numeric"
                 value={form.pincode}
                 onChange={(e) => updateField('pincode', e.target.value.replace(/\D/g, ''))}
               />
+              <input required placeholder="City" aria-label="City" autoComplete="address-level2" value={form.city} onChange={(e) => updateField('city', e.target.value)} />
+              <input required placeholder="State" aria-label="State" autoComplete="address-level1" value={form.state} onChange={(e) => updateField('state', e.target.value)} />
             </div>
             {pincodeLookup === 'loading' && <small className="pincodeHint">Looking up city/state…</small>}
             {pincodeLookup === 'error' && <small className="pincodeHint">Couldn't auto-fill from that PIN — enter city/state manually.</small>}
           </CheckoutBlock>
-          <CheckoutBlock title="Payment Method">
+          <CheckoutBlock title="Payment" step={3}>
             <div className="paymentGrid">
               <label className="selected">
                 <input type="radio" name="payment" value="online" checked readOnly />
-                <span>Pay Online<small>UPI, cards and net banking</small></span>
+                <span>Pay Online<small>UPI, cards, net banking &amp; wallets</small></span>
               </label>
+            </div>
+            <div className="razorpayBadge">
+              <Lock size={14} />
+              <span>100% secure payments powered by <strong>Razorpay</strong></span>
             </div>
           </CheckoutBlock>
           {error && <p className="formError" role="alert">{error}</p>}
           <button className="placeOrderButton" type="submit" disabled={!cart.length || submitting}>
-            {submitting ? 'Processing…' : 'Place Order'} <span>₹{finalTotal.toLocaleString('en-IN')}</span>
+            {submitting ? 'Processing…' : <><Lock size={16} /> Pay Securely</>} <span>₹{finalTotal.toLocaleString('en-IN')}</span>
           </button>
+          <div className="trustRow">
+            <span><ShieldCheck size={15} /> Safe &amp; Secure</span>
+            <span><Truck size={15} /> Fast Dispatch</span>
+            <span><Lock size={15} /> Razorpay Encrypted</span>
+          </div>
         </section>
         <aside className="orderSummary">
           <h2>Order Summary</h2>

@@ -3608,6 +3608,23 @@ button.ghostButton {
 .orderSummary h2 {
   margin: 0 0 18px;
   font-family: var(--font-headline);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stepBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--wine);
+  color: var(--paper);
+  font-size: 0.8rem;
+  font-family: var(--font-body, inherit);
+  flex-shrink: 0;
 }
 
 .checkoutBlock input,
@@ -3679,6 +3696,45 @@ button.ghostButton {
   display: block;
   margin-top: 4px;
   color: var(--muted);
+}
+
+.razorpayBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.razorpayBadge strong {
+  color: var(--wine);
+}
+
+.trustRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.trustRow span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.placeOrderButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .pincodeHint {

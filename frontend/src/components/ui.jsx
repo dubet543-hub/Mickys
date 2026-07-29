@@ -66,10 +66,10 @@ export function Accordion({ title, open, onToggle, children }) {
   );
 }
 
-export function CheckoutBlock({ title, children }) {
+export function CheckoutBlock({ title, step, children }) {
   return (
     <section className="checkoutBlock">
-      <h2>{title}</h2>
+      <h2>{step && <span className="stepBadge">{step}</span>}{title}</h2>
       {children}
     </section>
   );
