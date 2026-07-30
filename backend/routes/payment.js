@@ -61,7 +61,17 @@ router.post('/verify', async (req, res, next) => {
         order.statusHistory.push({ status: 'confirmed', note: 'Payment received via Razorpay' });
         await order.save();
 
-        shiprocket.createShipment(order).catch((err) => {
+        shiprocket.createShipment(order).then(async (result) => {
+          order.shiprocket = {
+            orderId: result.order_id ? String(result.order_id) : order.shiprocket?.orderId,
+            shipmentId: result.shipment_id ? String(result.shipment_id) : order.shiprocket?.shipmentId,
+            awbCode: order.shiprocket?.awbCode,
+            courierName: order.shiprocket?.courierName,
+            status: result.status || 'created',
+          };
+          if (result.awb_code) order.trackingNumber = result.awb_code;
+          await order.save();
+        }).catch((err) => {
           console.error(`Shiprocket shipment creation failed for ${order.orderId}: ${err.message}`);
         });
       }
