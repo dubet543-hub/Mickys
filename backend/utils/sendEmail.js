@@ -4,6 +4,8 @@ const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  // Render's network can't route Gmail's IPv6 SMTP address (causes ENETUNREACH) — force IPv4.
+  family: 4,
 });
 
 const sendOrderConfirmation = async (order) => {

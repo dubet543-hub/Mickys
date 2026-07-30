@@ -1,9 +1,14 @@
+const dns = require('dns');
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
 dotenv.config();
+
+// Render's outbound network can't route IPv6 (causes ENETUNREACH to Gmail,
+// Shiprocket, etc.) — prefer IPv4 for all DNS lookups app-wide.
+dns.setDefaultResultOrder('ipv4first');
 
 const app = express();
 
