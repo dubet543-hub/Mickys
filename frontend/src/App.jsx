@@ -36,7 +36,8 @@ export default function App() {
 
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const shipping = subtotal > 0 && subtotal < 499 ? 49 : 0;
+  const hasFreeShippingBundle = cart.some((item) => item.id === 'bundle-gravies');
+  const shipping = subtotal > 0 && subtotal < 499 && !hasFreeShippingBundle ? 49 : 0;
   const total = subtotal + shipping;
 
   function navigate(nextView) {
