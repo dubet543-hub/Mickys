@@ -54,7 +54,7 @@ const PRODUCTS = [
   },
   {
     slug: 'gravies-bundle', name: 'Gravies Bundle', tagline: 'Four signature ready-to-cook gravy bases',
-    price: 1199, mrp: 1596, label: 'Pack of 4', category: 'bundles', weight: '4 x 1kg',
+    price: 1, mrp: 1596, label: 'Pack of 4', category: 'bundles', weight: '4 x 1kg',
     shelfLife: '12 months', stock: 40, sold: 12, isFeatured: true,
     image: 'https://mickys.in/wp-content/uploads/bundle-gravies.png',
     description: 'Makhani, Kadhai, Malabari and Yellow gravy — restaurant flavour in minutes.',
